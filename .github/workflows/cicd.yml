@@ -42,10 +42,8 @@ jobs:
         run: |
           oc login --token=${{ secrets.OPENSHIFT_TOKEN }} --server=${{ secrets.OPENSHIFT_SERVER }}
           
-          # Try to create a new project. Red Hat Sandbox may ignore this if you don't have permission.
-          oc new-project portfolio-website || echo "Project creation ignored/already exists"
+          oc new-project portfolio-website || echo "Project already exists"
           
-          # Inject image with unique commit version
           sed -i "s|DOCKER_IMAGE|docker.io/${{ secrets.DOCKERHUB_USERNAME }}/portfolio-website:${{ github.sha }}|g" k8s/deployment.yaml
           
           oc apply -f k8s/
