@@ -24,3 +24,16 @@ jobs:
           context: .
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/portfolio-website:latest
+
+  deploy-to-local-crc:
+    needs: build-and-push
+    runs-on: self-hosted
+    steps:
+      - name: Deploy/Update on OpenShift CRC
+        run: |
+          # This command will run directly on your MacOS terminal via the self-hosted runner
+          # Assuming you already ran `oc new-app` once, this will pull the new image and re-deploy
+          oc import-image docker.io/${{ secrets.DOCKERHUB_USERNAME }}/portfolio-website:latest --confirm
+          # If using a Deployment/DeploymentConfig, you can also force a rollout:
+          # oc rollout latest deployment/portfolio-website || true
+
