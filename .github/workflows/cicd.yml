@@ -25,15 +25,19 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/portfolio-website:latest
 
-  deploy-to-local-crc:
+  deploy-to-openshift:
     needs: build-and-push
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
-      - name: Deploy/Update on OpenShift CRC
+      - name: Install OpenShift CLI (oc)
         run: |
-          # This command will run directly on your MacOS terminal via the self-hosted runner
-          # Assuming you already ran `oc new-app` once, this will pull the new image and re-deploy
+          curl -LO https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/openshift-client-linux.tar.gz
+          tar -xvzf openshift-client-linux.tar.gz
+          sudo mv oc /usr/local/bin/
+
+      - name: Log in to OpenShift and Deploy
+        run: |
+          oc login --token=sha256~NUgwauaJ8ClGBnzO1azSiLMYTp55c1jmk1EsZHQ5UTI --server=https://api.rm1.0a51.p1.openshiftapps.com:6443
           oc import-image docker.io/${{ secrets.DOCKERHUB_USERNAME }}/portfolio-website:latest --confirm
-          # If using a Deployment/DeploymentConfig, you can also force a rollout:
-          # oc rollout latest deployment/portfolio-website || true
+          
 
