@@ -47,7 +47,7 @@ export function Hero() {
           variants={item}
           className="text-4xl sm:text-6xl md:text-7xl font-bold text-neutral-900 dark:text-neutral-50 mb-5 sm:mb-7 tracking-tight"
         >
-          Mayur Nikam
+          Mayur Dayaram Nikam
         </motion.h1>
 
         {/* Subtitle with refined weight */}
