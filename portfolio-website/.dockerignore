@@ -1,0 +1,13 @@
+.git
+.gitignore
+.next
+node_modules
+README.md
+*.pdf
+*.jpeg
+*.jpg
+*.png
+Dockerfile
+docker-compose.yml
+.dockerignore
+.eslintrc.json
