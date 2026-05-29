@@ -37,7 +37,18 @@ jobs:
 
       - name: Log in to OpenShift and Deploy
         run: |
-          oc login --token=sha256~NUgwauaJ8ClGBnzO1azSiLMYTp55c1jmk1EsZHQ5UTI --server=https://api.rm1.0a51.p1.openshiftapps.com:6443
-          oc import-image docker.io/${{ secrets.DOCKERHUB_USERNAME }}/portfolio-website:latest --confirm
+          oc login --token=${{ secrets.OPENSHIFT_TOKEN }} --server=${{ secrets.OPENSHIFT_SERVER }}
+          
+          # Replace image placeholder with the actual DockerHub image URL
+          sed -i "s|DOCKER_IMAGE|docker.io/${{ secrets.DOCKERHUB_USERNAME }}/portfolio-website:latest|g" k8s/deployment.yaml
+          
+          # Apply the Kubernetes manifests (Creates Deployment and Service)
+          oc apply -f k8s/
+          
+          # Expose the service to create a route (ignores error if it already exists)
+          oc get route portfolio-website || oc expose svc/portfolio-website
+          
+          # Force a restart of the pods so OpenShift pulls the newest image we just pushed
+          oc rollout restart deployment/portfolio-website
           
 
